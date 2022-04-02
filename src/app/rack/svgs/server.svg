@@ -5,7 +5,7 @@
 
     <g id="title" clip-path="url(#titleClip)">
       <rect fill="#4da3d4" width="400" height="50" />
-      <text x="8" y="32" font-size="16pt" font-family="arial" id="asset-name">XXXXXXXXXXXXXXX</text>
+      <text x="8" y="32" width="400" font-size="16pt" font-family="arial" id="asset-name" background="red">XXXXXXXX</text>
     </g>
     <clipPath id="titleClip">
       <polygon points="0,0 180,0 60,50 0,50" width="400" style="fill:#4da3d4;" />
