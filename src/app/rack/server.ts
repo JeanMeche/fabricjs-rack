@@ -30,10 +30,10 @@ export const Server = fabric.util.createClass(fabric.Group, {
     });
 
     const clip = new fabric.Polygon([
-      { x: -200, y: -uHeight / 2 },
-      { x: -20, y: -uHeight / 2 },
-      { x: -100, y: uHeight / 2 },
-      { x: -200, y: uHeight / 2 },
+      { x: -this.baseSize.width / 2, y: -uHeight / 2 },
+      { x: -this.baseSize.width / 5 + 40, y: -uHeight / 2 },
+      { x: -this.baseSize.width / 5, y: uHeight / 2 },
+      { x: -this.baseSize.width / 2, y: uHeight / 2 },
     ]);
 
     var text = new fabric.Text(name, {
@@ -57,18 +57,34 @@ export const Server = fabric.util.createClass(fabric.Group, {
     this.height = this.height;
     this.originX = 'center';
     this.originY = 'center';
+    this.type = 'server';
 
-    this.on('selected', (e) => {
-      e.target?.animate(
-        { scaleX: 1.2, scaleY: 1.2 },
-        { from: 1, onChange: canvas.renderAll.bind(canvas), duration: 300 }
-      );
+    this.on('mousedown', (e) => {
+      if (e.target?.scaleX !== 1) {
+        e.target?.animate(
+          { scaleX: 1, scaleY: 1 },
+          {
+            from: e.target.scaleX,
+            onChange: canvas.renderAll.bind(canvas),
+            duration: 300,
+          }
+        );
+      } else {
+        e.target?.animate(
+          { scaleX: 1.2, scaleY: 1.2 },
+          { from: 1, onChange: canvas.renderAll.bind(canvas), duration: 300 }
+        );
+      }
     });
 
     this.on('deselected', (e) => {
       e.target?.animate(
         { scaleX: 1, scaleY: 1 },
-        { from: 1.2, onChange: canvas.renderAll.bind(canvas), duration: 300 }
+        {
+          from: e.target.scaleX,
+          onChange: canvas.renderAll.bind(canvas),
+          duration: 300,
+        }
       );
     });
   },
