@@ -2,31 +2,20 @@ import { Injectable } from '@angular/core';
 import { fabric } from 'fabric';
 import {
   rackHeight,
+  rackInfoHeight,
   rackWidth,
   rackX,
   rackY,
   uHeight,
-  units,
 } from './constants';
-import { Server } from './rack/server';
-import { UUnits } from './rack/u-units';
+import { RackInfo } from './rack/header-info';
+import { Rack } from './rack/rack';
 
 export type Asset = fabric.Group & { __brand: 'asset' } & {
   baseSize: { height: number; width: number };
   type: string;
   rackSize: number;
 };
-
-const rack = new (fabric.util.createClass(fabric.Rect, {
-  initialize: function (this: fabric.Rect) {
-    this.rx = 16;
-    this.ry = 16;
-    this.width = rackWidth;
-    this.height = uHeight * units;
-    this.fill = '#ccc';
-    this.selectable = false;
-  },
-}))() as fabric.Rect;
 
 @Injectable({ providedIn: 'root' })
 export class FabricService {
@@ -52,14 +41,20 @@ export class FabricService {
     this.setupSnap();
     this.setupMouseEvents();
 
-    rack.top = rackY;
+    const rack = new Rack();
+    rack.top = rackY + rackInfoHeight;
     rack.left = rackX;
     this.canvas.add(rack);
 
-    const u = new UUnits(units);
-    u.left = rackX - uHeight; // - uHeight / 2;
-    u.top = rackY; // + u.height / 2;
-    this.canvas.add(u);
+    const rackInfo = new RackInfo(this.canvas);
+    rackInfo.top = rackY;
+    rackInfo.left = rackX;
+    this.canvas.add(rackInfo);
+
+    // const u = new UUnits(units);
+    // u.left = rackX - uHeight; // - uHeight / 2;
+    // u.top = rackY; // + u.height / 2;
+    // this.canvas.add(u);
 
     let inc = 0;
     [
@@ -68,18 +63,11 @@ export class FabricService {
       { name: 'Pikachu', size: 3 },
       { name: 'Bulbizarre', size: 4 },
     ].map(async ({ name, size }) => {
-      const asset = new Server(name, size, this.canvas);
-      this.addAsset(asset, inc);
+      //const asset = new Server(name, size, this.canvas);
+      //rack.addAsset(asset, inc);
       inc += size;
     });
   }
-
-  addAsset = (asset: Asset, row: number): void => {
-    const y = rackY + row * uHeight;
-    asset.top = y + asset.height! / 2;
-    asset.left = rackX + asset.width! / 2;
-    this.canvas.add(asset);
-  };
 
   setupSnap() {
     for (var i = 0; i < this.width / this.grid; i++) {
